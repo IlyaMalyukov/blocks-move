@@ -27,17 +27,7 @@ export default Vue.extend({
     }
   }),
   methods: {
-    dragStart(e: any, block: any) {
-      e.dataTransfer.dropEffect = 'move'
-      e.dataTransfer.effectAllowed = 'move'
-      e.dataTransfer.setData('itemID', block.id)
-    },
     dragEnd(e: any, block: any) {
-      block.coordTop = e.pageY
-      block.coordLeft = e.pageX
-    },
-    onDrop(e: any, block: any) {
-      const itemID = e.dataTransfer.getData('itemID')
       block.coordTop = e.pageY
       block.coordLeft = e.pageX
     },
