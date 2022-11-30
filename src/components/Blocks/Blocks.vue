@@ -10,15 +10,21 @@
       v-for='node in 4'
       @click='selectBlockNode(block, node)'
       :class='`block__circle-${node}`'
-      :id='`block-${block.id}-node-${node}`')
+      :id='`block-${block.id}-node-${node}`'
+      :ref='`block-${block.id}-node-${node}`'
+    )
     svg(v-for='item in block.connections')
       line(
-        :x1="item.x1" 
-        :y1="item.y1" 
-        :x2="item.x2" 
-        :y2="item.y2" 
+        :x1="firstCircleCoord().x" 
+        :y1="firstCircleCoord().y" 
+        :x2="secondCircleCoord().x" 
+        :y2="secondCircleCoord().y"
         style="stroke: #E15720; stroke-width: 4px;"
       )
+    //- span {{firstCircleCoord().x}}
+    //- span {{firstCircleCoord().y}}
+    //- span {{secondCircleCoord().x}}
+    //- span {{secondCircleCoord().y}}
 .no-data(v-else) No data
 </template>
 
@@ -28,7 +34,7 @@ import Vue from 'vue'
 export default Vue.extend({
   name: 'Cards',
   data: () => ({
-    selectedBlocks: <any>[]
+    selectedBlocks: <any>[],
   }),
   methods: {
     drag(block: any) {
@@ -71,6 +77,7 @@ export default Vue.extend({
         this.addConnection()
       }
     },
+    // Связи
     addConnection() {
       let firstBlockConnections: any = this.selectedBlocks[0].connections
       let secondBlockConnections: any = this.selectedBlocks[1].connections
@@ -102,6 +109,19 @@ export default Vue.extend({
       })
 
       this.$store.dispatch('updateBlocks', blocks)
+    },
+    // Линии
+    firstCircleCoord() {
+      return this.findCircleCoord(0)
+    },
+    secondCircleCoord() {
+      return this.findCircleCoord(1)
+    },
+    findCircleCoord(blockIndex: number) {
+      let connection = this.selectedBlocks[blockIndex].connections[0]
+      let circle: any = this.$refs[`block-${connection.blockId}-node-${connection.nodeId}`]
+
+      return circle[0].getBoundingClientRect()
     }
   },
   computed: {
