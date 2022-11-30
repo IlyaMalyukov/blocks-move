@@ -2,22 +2,21 @@
 .blocks(v-if='blocks.length')
   .block(
     v-for='block in blocks'
-    draggable='true'
-    :style='{"position": "absolute","top": `${block.coordTop}px`,"left": `${block.coordTop}px`}'
-    :ref='`block-${block.id}`'
+    :style='{"top": `${block.coordTop}px`,"left": `${block.coordLeft}px`}'
     :id='`block-${block.id}`'
-    @dragend='dragEnd($event, block)'
-    @click='selectBlock(block)'
+    @mousedown='drag(block)'
   )
     .block__circle(
-      v-for='circle in 4'
-      :class='`block__circle-${circle}`')
-    svg(v-for='line in block.connections')
+      v-for='node in 4'
+      @click='selectBlockNode(block, node)'
+      :class='`block__circle-${node}`'
+      :id='`block-${block.id}-node-${node}`')
+    svg(v-for='item in block.connections')
       line(
-        :x1="line.x1" 
-        :y1="line.y1" 
-        :x2="line.x2" 
-        :y2="line.y2" 
+        :x1="item.x1" 
+        :y1="item.y1" 
+        :x2="item.x2" 
+        :y2="item.y2" 
         style="stroke: #E15720; stroke-width: 4px;"
       )
 .no-data(v-else) No data
@@ -29,35 +28,58 @@ import Vue from 'vue'
 export default Vue.extend({
   name: 'Cards',
   data: () => ({
-    selectedBlocks: [
-      {
-        id: -1,
-        connections: [-1]
-      }
-    ]
+    selectedBlocks: <any>[]
   }),
   methods: {
-    dragEnd(e: any, block: any) {
-      block.coordTop = e.pageY
-      block.coordLeft = e.pageX
-    },
-    selectBlock(block: any) {
-      this.selectedBlocks.push(block)
+    drag(block: any) {
+      let dragBlock: any = document.getElementById(`block-${block.id}`)
+      let moveAt = this.moveAt
 
-      if (this.selectedBlocks[0].id === -1) {
-        this.selectedBlocks.splice(0, 1)
+      dragBlock.onmousedown = function(e: any) {
+        moveAt(e, block)
+        document.body.appendChild(dragBlock)
+
+        document.onmousemove = function(e) {
+          moveAt(e, block)
+        }
+
+        dragBlock.onmouseup = function() {
+          document.onmousemove = null
+          dragBlock.onmouseup = null
+        }
       }
+    },
+    moveAt(e: any, block: any) {
+      let dragBlock: any = document.getElementById(`block-${block.id}`)
+      dragBlock.style.left = e.pageX - dragBlock.offsetWidth / 2 + 'px'
+      dragBlock.style.top = e.pageY - dragBlock.offsetHeight / 2 + 'px'
+    },
+    selectBlockNode(block: any, node: any) {
+      let preparedBlock: any = {
+        id: block.id,
+        connections: [
+          {
+            blockId: block.id,
+            nodeId: node
+          }
+        ]
+      }
+
+      this.selectedBlocks.push(preparedBlock)
 
       if (this.selectedBlocks.length === 2) {
         this.addConnection()
       }
     },
     addConnection() {
-      const firstBlockId = this.selectedBlocks[0].id
-      const secondBlockId = this.selectedBlocks[1].id
+      let firstBlock: any = this.selectedBlocks[0]
+      let secondBlock: any = this.selectedBlocks[1]
 
-      this.selectedBlocks[0].connections.push(secondBlockId)
-      this.selectedBlocks[1].connections.push(firstBlockId)
+      console.log(firstBlock)
+      console.log(secondBlock)
+
+      this.selectedBlocks[0].connections = secondBlock
+      this.selectedBlocks[1].connections = firstBlock
 
       this.updateBlocks()
     },
@@ -66,21 +88,12 @@ export default Vue.extend({
         ...this.blocks,
       ]
       this.$store.dispatch('updateBlocks', blocks)
-      console.log(this.blocks)
     }
   },
   computed: {
     blocks() {
       return this.$store.getters['blocks']
     },
-  },
-  watch: {
-    blocks() {
-      this.selectedBlocks = [{
-        id: -1,
-        connections: [-1]
-      }]
-    }
   },
 })
 </script>
@@ -96,6 +109,7 @@ export default Vue.extend({
 }
 
 .block {
+  position: absolute;
   width: 80px;
   height: 80px;
   border-radius: 5px;
@@ -109,6 +123,7 @@ export default Vue.extend({
     border-radius: 50%;
     position: absolute;
     border: 2px solid #fff;
+    cursor: pointer;
 
     &:hover {
       background: darken(#1867c0, 5%);
