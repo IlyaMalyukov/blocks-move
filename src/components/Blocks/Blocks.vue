@@ -72,18 +72,21 @@ export default Vue.extend({
       }
     },
     addConnection() {
-      let firstBlock: any = this.selectedBlocks[0]
-      let secondBlock: any = this.selectedBlocks[1]
+      let firstBlockConnections: any = this.selectedBlocks[0].connections
+      let secondBlockConnections: any = this.selectedBlocks[1].connections
 
-      this.selectedBlocks[0].connections = secondBlock.connections
-      this.selectedBlocks[1].connections = firstBlock.connections
+      this.selectedBlocks[0].connections = secondBlockConnections
+      this.selectedBlocks[1].connections = firstBlockConnections
 
-      this.updateBlocks()
+      console.log(this.selectedBlocks)
+
+      // this.updateBlocks()
     },
     async updateBlocks() {
       let blocks = [
         ...this.blocks,
       ]
+
       await this.$store.dispatch('updateBlocks', blocks)
 
     }
