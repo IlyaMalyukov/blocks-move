@@ -19,15 +19,15 @@ export default Vue.extend({
     Toolbar,
     Blocks
   },
-  data: () => ({
-    defaultBlock: {
-      coordTop: 50,
-      coordLeft: 50
-    }
-  }),
   methods: {
     addBlock() {
-      this.$store.dispatch('addBlock', this.defaultBlock)
+      const block = {
+        id: this.blocks.length,
+        coordTop: 50,
+        coordLeft: 50
+      }
+
+      this.$store.dispatch('addBlock', block)
     }
   },
   computed: {
