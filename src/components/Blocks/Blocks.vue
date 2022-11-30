@@ -78,17 +78,30 @@ export default Vue.extend({
       this.selectedBlocks[0].connections = secondBlockConnections
       this.selectedBlocks[1].connections = firstBlockConnections
 
-      console.log(this.selectedBlocks)
-
-      // this.updateBlocks()
+      this.updateBlocks()
     },
-    async updateBlocks() {
-      let blocks = [
-        ...this.blocks,
+    updateBlocks() {
+      let blocks: any = [
+        ...this.blocks
       ]
 
-      await this.$store.dispatch('updateBlocks', blocks)
+      let firstBlock = this.selectedBlocks[0]
+      let secondBlock = this.selectedBlocks[1]
 
+
+      this.blocks.forEach((i: any) => {
+        if (i.id === firstBlock.id) {
+          let index = blocks.findIndex((i: any) => i.id === firstBlock.id)
+          blocks[index] = firstBlock
+        }
+
+        if (i.id === secondBlock.id) {
+          let index = blocks.findIndex((i: any) => i.id === secondBlock.id)
+          blocks[index] = secondBlock
+        }
+      })
+
+      this.$store.dispatch('updateBlocks', blocks)
     }
   },
   computed: {
