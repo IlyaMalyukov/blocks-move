@@ -11,13 +11,19 @@ const store = new Vuex.Store({
     blocks: []
   },
   mutations: {
-    createBlock(state: { blocks: any[] }, block: any) {
+    addBlock(state: { blocks: any[] }, block: any) {
       state.blocks.push(block)
     },
+    updateBlocks(state: { blocks: any[] }, blocks: any) {
+      state.blocks = blocks
+    }
   },
   actions: {
     addBlock({commit}, block: any) {
-      commit('createBlock', block)
+      commit('addBlock', block)
+    },
+    updateBlocks({commit}, blocks: any) {
+      commit('updateBlocks', blocks)
     }
   },
   getters: {

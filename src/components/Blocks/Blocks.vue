@@ -4,15 +4,22 @@
     v-for='block in blocks'
     draggable='true'
     :style='{"position": "absolute","top": `${block.coordTop}px`,"left": `${block.coordTop}px`}'
-    :class='{"block_selected": selectedBlock.id === block.id}'
     :ref='`block-${block.id}`'
     :id='`block-${block.id}`'
     @dragend='dragEnd($event, block)'
     @click='selectBlock(block)'
   )
     .block__circle(
-      v-for='item in 4'
-      :class='`block__circle-${item}`')
+      v-for='circle in 4'
+      :class='`block__circle-${circle}`')
+    svg(v-for='line in block.connections')
+      line(
+        :x1="line.x1" 
+        :y1="line.y1" 
+        :x2="line.x2" 
+        :y2="line.y2" 
+        style="stroke: #E15720; stroke-width: 4px;"
+      )
 .no-data(v-else) No data
 </template>
 
@@ -22,9 +29,12 @@ import Vue from 'vue'
 export default Vue.extend({
   name: 'Cards',
   data: () => ({
-    selectedBlock: {
-      id: -1
-    }
+    selectedBlocks: [
+      {
+        id: -1,
+        connections: [-1]
+      }
+    ]
   }),
   methods: {
     dragEnd(e: any, block: any) {
@@ -32,14 +42,46 @@ export default Vue.extend({
       block.coordLeft = e.pageX
     },
     selectBlock(block: any) {
-      this.selectedBlock = block
+      this.selectedBlocks.push(block)
+
+      if (this.selectedBlocks[0].id === -1) {
+        this.selectedBlocks.splice(0, 1)
+      }
+
+      if (this.selectedBlocks.length === 2) {
+        this.addConnection()
+      }
+    },
+    addConnection() {
+      const firstBlockId = this.selectedBlocks[0].id
+      const secondBlockId = this.selectedBlocks[1].id
+
+      this.selectedBlocks[0].connections.push(secondBlockId)
+      this.selectedBlocks[1].connections.push(firstBlockId)
+
+      this.updateBlocks()
+    },
+    updateBlocks() {
+      let blocks = [
+        ...this.blocks,
+      ]
+      this.$store.dispatch('updateBlocks', blocks)
+      console.log(this.blocks)
     }
   },
   computed: {
     blocks() {
       return this.$store.getters['blocks']
+    },
+  },
+  watch: {
+    blocks() {
+      this.selectedBlocks = [{
+        id: -1,
+        connections: [-1]
+      }]
     }
-  }
+  },
 })
 </script>
 
@@ -59,10 +101,6 @@ export default Vue.extend({
   border-radius: 5px;
   background: #9AC017;
   cursor: move;
-
-  &_selected {
-    background: darken(#9AC017, 5%);
-  }
 
   &__circle {
     background: #1867c0;
