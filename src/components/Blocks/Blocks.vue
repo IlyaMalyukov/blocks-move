@@ -60,6 +60,8 @@ export default Vue.extend({
     selectBlockNode(block: any, node: any) {
       let preparedBlock: any = {
         id: block.id,
+        coordTop: block.coordTop,
+        coordLeft: block.coordLeft,
         connections: [
           {
             blockId: block.id,
