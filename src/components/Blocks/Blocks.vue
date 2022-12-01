@@ -16,12 +16,20 @@
       svg(v-for='item in block.connections')
         line(
           v-if='item.nodeId === node'
+          :x1="setCircleCoord(item.blockId, item.nodeId).x"
+          :y1="setCircleCoord(item.blockId, item.nodeId).y"
           :x2="12"
           :y2="12"
-          :x1="setCircleCoord(block.id, item.nodeId).x"
-          :y1="setCircleCoord(block.id, item.nodeId).y"
           style="stroke: #E15720; stroke-width: 4px;"
         )
+        //- line(
+        //-   v-if='item.nodeId === node'
+        //-   :x1="setCircleCoord(block.id, findNodeId(block.id, item.blockId)).x"
+        //-   :y1="setCircleCoord(block.id, findNodeId(block.id, item.blockId)).y"
+        //-   :x2="setCircleCoord(item.blockId, item.nodeId).x"
+        //-   :y2="setCircleCoord(item.blockId, item.nodeId).y"
+        //-   style="stroke: #E15720; stroke-width: 4px;"
+        //- )
 .no-data(v-else) No data
 </template>
 
@@ -127,22 +135,24 @@ export default Vue.extend({
       return nodeId
     },
     findCircleCoord(blockId: number, nodeId: number) {
-      let block: any
-      let connection: any
+      // let block: any
+      // let connection: any
 
-      this.blocks.forEach((i: any) => {
-        if (i.id === blockId) {
-          block = i
-        }
-      })
+      // this.blocks.forEach((i: any) => {
+      //   if (i.id === blockId) {
+      //     block = i
+      //   }
+      // })
       
-      block.connections.forEach((i: any) => {
-        if (i.nodeId === nodeId) {
-          connection = i
-        }
-      })
+      // block.connections.forEach((i: any) => {
+      //   if (i.nodeId === nodeId) {
+      //     connection = i
+      //   }
+      // })
 
-      let circle: any = this.$refs[`block-${connection.blockId}-node-${connection.nodeId}`]
+      // let circle: any = this.$refs[`block-${connection.blockId}-node-${connection.nodeId}`]
+
+      let circle: any = this.$refs[`block-${blockId}-node-${nodeId}`]
 
       return circle[0].getBoundingClientRect()
     }
