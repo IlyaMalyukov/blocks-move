@@ -16,8 +16,8 @@
       svg(v-for='item in block.connections')
         line(
           v-if='item.nodeId === node'
-          :x1="10"
-          :y1="10"
+          :x1="12"
+          :y1="12"
           :x2="setCircleCoord(item.blockId, findNodeId(block.id, item.blockId)).x"
           :y2="setCircleCoord(item.blockId, findNodeId(block.id, item.blockId)).y"
           style="stroke: #E15720; stroke-width: 4px;"
