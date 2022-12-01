@@ -16,10 +16,10 @@
       svg(v-for='item in block.connections')
         line(
           v-if='item.nodeId === node'
-          :x1="12"
-          :y1="12"
-          :x2="setCircleCoord(item.blockId, findNodeId(block.id, item.blockId)).x"
-          :y2="setCircleCoord(item.blockId, findNodeId(block.id, item.blockId)).y"
+          :x2="12"
+          :y2="12"
+          :x1="setCircleCoord(block.id, item.nodeId).x"
+          :y1="setCircleCoord(block.id, item.nodeId).y"
           style="stroke: #E15720; stroke-width: 4px;"
         )
 .no-data(v-else) No data
