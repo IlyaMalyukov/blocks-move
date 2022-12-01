@@ -13,14 +13,15 @@
       :id='`block-${block.id}-node-${node}`'
       :ref='`block-${block.id}-node-${node}`'
     )
-    svg(v-for='item in block.connections')
-      line(
-        :x1="setCircleCoord(block.id, findNodeId(block.id, item.blockId)).x"
-        :y1="setCircleCoord(block.id, findNodeId(block.id, item.blockId)).y"
-        :x2="setCircleCoord(item.blockId, item.nodeId).x"
-        :y2="setCircleCoord(item.blockId, item.nodeId).y"
-        style="stroke: #E15720; stroke-width: 4px;"
-      )
+      svg(v-for='item in block.connections')
+        line(
+          v-if='item.nodeId === node'
+          :x1="0"
+          :y1="0"
+          :x2="setCircleCoord(item.blockId, findNodeId(block.id, item.blockId)).x"
+          :y2="setCircleCoord(item.blockId, findNodeId(block.id, item.blockId)).y"
+          style="stroke: #E15720; stroke-width: 4px;"
+        )
 .no-data(v-else) No data
 </template>
 
