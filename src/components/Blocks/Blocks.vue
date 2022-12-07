@@ -13,6 +13,7 @@ svg.blocks(v-if='blocks.length')
         :class='`block__circle-${node}`'
         :ref='`block-${block.id}-node-${node}`'
       )
+        //-  to do убрать v-if и v-for в одном месте
         line(
           v-for='item in block.connections'
           v-if='item.nodeId === node'
