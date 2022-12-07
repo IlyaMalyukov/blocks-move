@@ -1,22 +1,27 @@
 <template lang="pug">
 svg.blocks(v-if='blocks.length')
   foreignObject.blocks-wrapper
-    BlockItem(
+    .block(
       v-for='block in blocks'
       :block='block'
       :style='{"top": `${block.coordTop}px`,"left": `${block.coordLeft}px`}'
       :id='`block-${block.id}`'
-      @select-block-node='selectBlockNode'
       @mousedown='drag(block)'
     )
-      line(
-        v-for='item in block.connections'
-        :x1="setCircleCoord(block.id, findNodeId(block.id, item.blockId)).x"
-        :y1="setCircleCoord(block.id, findNodeId(block.id, item.blockId)).y"
-        :x2="setCircleCoord(item.blockId, item.nodeId).x"
-        :y2="setCircleCoord(item.blockId, item.nodeId).y"
-        style="stroke: #E15720; stroke-width: 4px;"
+      .block__circle(
+        v-for='node in 4'
+        @click='selectBlockNode({block, node})'
+        :class='`block__circle-${node}`'
+        :ref='`block-${block.id}-node-${node}`'
       )
+      //- line(
+      //-   v-for='item in block.connections'
+      //-   :x1="setCircleCoord(block.id, findNodeId(block.id, item.blockId)).x"
+      //-   :y1="setCircleCoord(block.id, findNodeId(block.id, item.blockId)).y"
+      //-   :x2="setCircleCoord(item.blockId, item.nodeId).x"
+      //-   :y2="setCircleCoord(item.blockId, item.nodeId).y"
+      //-   style="stroke: #E15720; stroke-width: 4px;"
+      //- )
 .no-data(v-else) No data
 </template>
 
@@ -26,8 +31,6 @@ import Block from '@/types/Block'
 import Connection from '@/types/Connection'
 import { PropType } from 'vue/types/v3-component-props'
 
-import BlockItem from './Block.vue'
-
 interface emitData {
   block: Block,
   node: number
@@ -35,9 +38,6 @@ interface emitData {
 
 export default Vue.extend({
   name: 'Cards',
-  components: {
-    BlockItem
-  },
   data: () => ({
     selectedBlocks: [
       {
@@ -145,8 +145,6 @@ export default Vue.extend({
     findCircleCoord(blockId: number, nodeId: number) {
       let circle: any = this.$refs[`block-${blockId}-node-${nodeId}`]
 
-      console.log(this.$refs)
-
       return circle[0].getBoundingClientRect()
     }
   },
@@ -170,6 +168,50 @@ export default Vue.extend({
   &-wrapper {
     width: 100%;
     height: 100%;
+  }
+}
+
+.block {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  border-radius: 5px;
+  background: #9AC017;
+  cursor: move;
+
+  &__circle {
+    background: #1867c0;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    position: absolute;
+    border: 2px solid #fff;
+    cursor: pointer;
+
+    &:hover {
+      background: darken(#1867c0, 5%);
+    }
+
+    &-1 {
+      top: -10px;
+      left: 30%;
+      margin: 0 auto;
+    }
+
+    &-2 {
+      right: -10px;
+      top: 30%;
+    }
+
+    &-3 {
+      bottom: -10px;
+      left: 30%;
+    }
+
+    &-4 {
+      left: -10px;
+      top: 30%;
+    }
   }
 }
 
