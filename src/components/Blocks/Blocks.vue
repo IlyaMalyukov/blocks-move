@@ -1,35 +1,22 @@
 <template lang="pug">
-.blocks(v-if='blocks.length')
-  .block(
-    v-for='block in blocks'
-    :style='{"top": `${block.coordTop}px`,"left": `${block.coordLeft}px`}'
-    :id='`block-${block.id}`'
-    @mousedown='drag(block)'
-  )
-    .block__circle(
-      v-for='node in 4'
-      @click='selectBlockNode(block, node)'
-      :class='`block__circle-${node}`'
-      :id='`block-${block.id}-node-${node}`'
-      :ref='`block-${block.id}-node-${node}`'
+svg.blocks(v-if='blocks.length')
+  foreignObject.blocks-wrapper
+    BlockItem(
+      v-for='block in blocks'
+      :block='block'
+      :style='{"top": `${block.coordTop}px`,"left": `${block.coordLeft}px`}'
+      :id='`block-${block.id}`'
+      @select-block-node='selectBlockNode'
+      @mousedown='drag(block)'
     )
-      svg(v-for='item in block.connections')
-        line(
-          v-if='item.nodeId === node'
-          :x1="setCircleCoord(item.blockId, item.nodeId).x"
-          :y1="setCircleCoord(item.blockId, item.nodeId).y"
-          :x2="12"
-          :y2="12"
-          style="stroke: #E15720; stroke-width: 4px;"
-        )
-        //- line(
-        //-   v-if='item.nodeId === node'
-        //-   :x1="setCircleCoord(block.id, findNodeId(block.id, item.blockId)).x"
-        //-   :y1="setCircleCoord(block.id, findNodeId(block.id, item.blockId)).y"
-        //-   :x2="setCircleCoord(item.blockId, item.nodeId).x"
-        //-   :y2="setCircleCoord(item.blockId, item.nodeId).y"
-        //-   style="stroke: #E15720; stroke-width: 4px;"
-        //- )
+      line(
+        v-for='item in block.connections'
+        :x1="setCircleCoord(block.id, findNodeId(block.id, item.blockId)).x"
+        :y1="setCircleCoord(block.id, findNodeId(block.id, item.blockId)).y"
+        :x2="setCircleCoord(item.blockId, item.nodeId).x"
+        :y2="setCircleCoord(item.blockId, item.nodeId).y"
+        style="stroke: #E15720; stroke-width: 4px;"
+      )
 .no-data(v-else) No data
 </template>
 
@@ -39,10 +26,27 @@ import Block from '@/types/Block'
 import Connection from '@/types/Connection'
 import { PropType } from 'vue/types/v3-component-props'
 
+import BlockItem from './Block.vue'
+
+interface emitData {
+  block: Block,
+  node: number
+}
+
 export default Vue.extend({
   name: 'Cards',
+  components: {
+    BlockItem
+  },
   data: () => ({
-    selectedBlocks: Array as PropType<Block[]>,
+    selectedBlocks: [
+      {
+        id: 0,
+        coordTop: 0,
+        coordLeft: 0,
+        connections: [{blockId: 0, nodeId: 0}]
+      }
+    ],
   }),
   methods: {
     drag(block: Block) {
@@ -68,22 +72,23 @@ export default Vue.extend({
       dragBlock.style.left = e.pageX - dragBlock.offsetWidth / 2 + 'px'
       dragBlock.style.top = e.pageY - dragBlock.offsetHeight / 2 + 'px'
     },
-    selectBlockNode(block: Block, node: number) {
+    selectBlockNode(data: emitData) {
       let preparedBlock: Block = {
-        id: block.id,
-        coordTop: block.coordTop,
-        coordLeft: block.coordLeft,
+        id: data.block.id,
+        coordTop: data.block.coordTop,
+        coordLeft: data.block.coordLeft,
         connections: [
           {
-            blockId: block.id,
-            nodeId: node
+            blockId: data.block.id,
+            nodeId: data.node
           }
         ]
       }
 
       this.selectedBlocks.push(preparedBlock)
 
-      if (this.selectedBlocks.length === 2) {
+      if (this.selectedBlocks.length === 3) {
+        this.selectedBlocks.shift()
         this.addConnection()
       }
     },
@@ -140,6 +145,8 @@ export default Vue.extend({
     findCircleCoord(blockId: number, nodeId: number) {
       let circle: any = this.$refs[`block-${blockId}-node-${nodeId}`]
 
+      console.log(this.$refs)
+
       return circle[0].getBoundingClientRect()
     }
   },
@@ -159,49 +166,10 @@ export default Vue.extend({
   border: 1px solid gainsboro;
   border-radius: 5px;
   margin-top: 10px;
-}
 
-.block {
-  position: absolute;
-  width: 80px;
-  height: 80px;
-  border-radius: 5px;
-  background: #9AC017;
-  cursor: move;
-
-  &__circle {
-    background: #1867c0;
-    width: 25px;
-    height: 25px;
-    border-radius: 50%;
-    position: absolute;
-    border: 2px solid #fff;
-    cursor: pointer;
-
-    &:hover {
-      background: darken(#1867c0, 5%);
-    }
-
-    &-1 {
-      top: -10px;
-      left: 30%;
-      margin: 0 auto;
-    }
-
-    &-2 {
-      right: -10px;
-      top: 30%;
-    }
-
-    &-3 {
-      bottom: -10px;
-      left: 30%;
-    }
-
-    &-4 {
-      left: -10px;
-      top: 30%;
-    }
+  &-wrapper {
+    width: 100%;
+    height: 100%;
   }
 }
 
