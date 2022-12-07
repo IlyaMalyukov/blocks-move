@@ -40,14 +40,7 @@ interface emitData {
 export default Vue.extend({
   name: 'Cards',
   data: () => ({
-    selectedBlocks: [
-      {
-        id: 0,
-        coordTop: 0,
-        coordLeft: 0,
-        connections: [{blockId: 0, nodeId: 0}]
-      }
-    ],
+    selectedBlocks: [{} as Block]
   }),
   methods: {
     drag(block: Block) {
