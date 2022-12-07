@@ -35,14 +35,17 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import Block from '@/types/Block'
+import Connection from '@/types/Connection'
+import { PropType } from 'vue/types/v3-component-props'
 
 export default Vue.extend({
   name: 'Cards',
   data: () => ({
-    selectedBlocks: <any>[],
+    selectedBlocks: Array as PropType<Block[]>,
   }),
   methods: {
-    drag(block: any) {
+    drag(block: Block) {
       let dragBlock: any = document.getElementById(`block-${block.id}`)
       let moveAt = this.moveAt
 
@@ -60,13 +63,13 @@ export default Vue.extend({
         }
       }
     },
-    moveAt(e: any, block: any) {
+    moveAt(e: any, block: Block) {
       let dragBlock: any = document.getElementById(`block-${block.id}`)
       dragBlock.style.left = e.pageX - dragBlock.offsetWidth / 2 + 'px'
       dragBlock.style.top = e.pageY - dragBlock.offsetHeight / 2 + 'px'
     },
-    selectBlockNode(block: any, node: any) {
-      let preparedBlock: any = {
+    selectBlockNode(block: Block, node: number) {
+      let preparedBlock: Block = {
         id: block.id,
         coordTop: block.coordTop,
         coordLeft: block.coordLeft,
@@ -86,8 +89,8 @@ export default Vue.extend({
     },
     // Связи
     addConnection() {
-      let firstBlockConnections: any = this.selectedBlocks[0].connections
-      let secondBlockConnections: any = this.selectedBlocks[1].connections
+      let firstBlockConnections: Array<Connection> = this.selectedBlocks[0].connections
+      let secondBlockConnections: Array<Connection> = this.selectedBlocks[1].connections
 
       this.selectedBlocks[0].connections = secondBlockConnections
       this.selectedBlocks[1].connections = firstBlockConnections
@@ -95,7 +98,7 @@ export default Vue.extend({
       this.updateBlocks()
     },
     updateBlocks() {
-      let blocks: any = [
+      let blocks: Array<Block> = [
         ...this.blocks
       ]
 
@@ -103,14 +106,14 @@ export default Vue.extend({
       let secondBlock = this.selectedBlocks[1]
 
 
-      this.blocks.forEach((i: any) => {
+      this.blocks.forEach((i: Block) => {
         if (i.id === firstBlock.id) {
-          let index = blocks.findIndex((i: any) => i.id === firstBlock.id)
+          let index = blocks.findIndex((i: Block) => i.id === firstBlock.id)
           blocks[index] = firstBlock
         }
 
         if (i.id === secondBlock.id) {
-          let index = blocks.findIndex((i: any) => i.id === secondBlock.id)
+          let index = blocks.findIndex((i: Block) => i.id === secondBlock.id)
           blocks[index] = secondBlock
         }
       })
@@ -122,11 +125,11 @@ export default Vue.extend({
       return this.findCircleCoord(blockId, nodeId)
     },
     findNodeId(mainBlockId: number, desiredBlockId: number) {
-      let mainBlock = this.blocks.find((i: any) => i.id === mainBlockId)
-      let desiredBlock = this.blocks.find((i: any) => i.id === desiredBlockId)
-      let nodeId: any
+      let mainBlock = this.blocks.find((i: Block) => i.id === mainBlockId)
+      let desiredBlock = this.blocks.find((i: Block) => i.id === desiredBlockId)
+      let nodeId: number = 0
 
-      desiredBlock.connections.forEach((i: any) => {
+      desiredBlock.connections.forEach((i: Connection) => {
         if (i.blockId === mainBlockId) {
           nodeId = i.nodeId
         }
@@ -135,23 +138,6 @@ export default Vue.extend({
       return nodeId
     },
     findCircleCoord(blockId: number, nodeId: number) {
-      // let block: any
-      // let connection: any
-
-      // this.blocks.forEach((i: any) => {
-      //   if (i.id === blockId) {
-      //     block = i
-      //   }
-      // })
-      
-      // block.connections.forEach((i: any) => {
-      //   if (i.nodeId === nodeId) {
-      //     connection = i
-      //   }
-      // })
-
-      // let circle: any = this.$refs[`block-${connection.blockId}-node-${connection.nodeId}`]
-
       let circle: any = this.$refs[`block-${blockId}-node-${nodeId}`]
 
       return circle[0].getBoundingClientRect()

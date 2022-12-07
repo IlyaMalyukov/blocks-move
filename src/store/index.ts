@@ -1,5 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import Block from '@/types/Block'
+import Connection from '@/types/Connection'
 // import VuexPersist from 'vuex-persist'
 
 // import blocks from './modules/blocks'
@@ -11,18 +13,18 @@ const store = new Vuex.Store({
     blocks: []
   },
   mutations: {
-    addBlock(state: { blocks: any[] }, block: any) {
+    addBlock(state: { blocks: Array<Block> }, block: Block) {
       state.blocks.push(block)
     },
-    updateBlocks(state: { blocks: any[] }, blocks: any) {
+    updateBlocks(state: { blocks: Array<Block> }, blocks: Array<Block>) {
       state.blocks = blocks
     }
   },
   actions: {
-    addBlock({commit}, block: any) {
+    addBlock({commit}, block: Block) {
       commit('addBlock', block)
     },
-    updateBlocks({commit}, blocks: any) {
+    updateBlocks({commit}, blocks: Block) {
       commit('updateBlocks', blocks)
     }
   },

@@ -24,12 +24,13 @@ export default Vue.extend({
       const block = {
         id: this.blocks.length,
         coordTop: this.randomInt(350),
-        coordLeft: this.randomInt(350)
+        coordLeft: this.randomInt(350),
+        connections: [{blockId: 0, nodeId: 0}]
       }
 
       this.$store.dispatch('addBlock', block)
     },
-    randomInt(max: any) {
+    randomInt(max: number) {
       return Math.floor(Math.random() * max)
     },
   },
