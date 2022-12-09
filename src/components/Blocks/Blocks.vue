@@ -40,7 +40,7 @@ interface emitData {
 export default Vue.extend({
   name: 'Cards',
   data: () => ({
-    selectedBlocks: [{} as Block]
+    selectedBlocks: [] as Block[]
   }),
   methods: {
     drag(block: Block) {
@@ -81,8 +81,7 @@ export default Vue.extend({
 
       this.selectedBlocks.push(preparedBlock)
 
-      if (this.selectedBlocks.length === 3) {
-        this.selectedBlocks.shift()
+      if (this.selectedBlocks.length === 2) {
         this.addConnection()
       }
     },
