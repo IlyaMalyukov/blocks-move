@@ -23,8 +23,8 @@ export default Vue.extend({
     addBlock() {
       const block = {
         id: this.blocks.length,
-        coordTop: this.randomInt(350),
-        coordLeft: this.randomInt(350),
+        coordTop: this.randomInt(250),
+        coordLeft: this.randomInt(450),
         connections: [{blockId: 0, nodeId: 0}]
       }
 
