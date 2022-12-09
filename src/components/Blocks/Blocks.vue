@@ -30,7 +30,6 @@ svg.blocks(v-if='blocks.length')
 import Vue from 'vue'
 import Block from '@/types/Block'
 import Connection from '@/types/Connection'
-import { PropType } from 'vue/types/v3-component-props'
 
 interface emitData {
   block: Block,
